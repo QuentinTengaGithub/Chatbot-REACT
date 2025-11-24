@@ -11,7 +11,7 @@ import "./chatContent.scss";
 import ChatItem from "./ChatItem";
 
 // Services
-import { getCovidData } from "../../Services/Bot/botAPI";
+import { getCovidData, getNews } from "../../Services/Bot/botAPI";
 
 // Constants
 import { bots } from "../../constants";
@@ -39,7 +39,12 @@ function ChatContent(props) {
     if (msg.match(/covid/gi)) {
       getCovidCaseCounts();
       return;
-    } 
+    }
+
+    if (msg.match(/news/gi)) {
+      getNewsData();
+      return;
+    }
 
     if (msg.match(/search/gi)) {
       askKeywordToSearch();
@@ -74,6 +79,15 @@ function ChatContent(props) {
       `The world covid report is as follows: ${response}`,
       "bot1"
     );
+  };
+
+  const getNewsData = async () => {
+    try {
+      const news = await getNews();
+      props.addMessageToChatFrom(`Here are the latest headlines:\n${news}`, "bot1");
+    } catch (error) {
+      props.addMessageToChatFrom("Unable to fetch news at the moment. Please try again later.", "bot1");
+    }
   };
 
   /**
